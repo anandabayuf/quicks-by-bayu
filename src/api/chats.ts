@@ -6,9 +6,9 @@ export const getChatByInboxId = (inboxId?: string) =>
 		path: `/chats/${inboxId}`,
 		method: 'GET',
 	}).then((res) =>
-		res.json().then((x) => {
-			useChatsStore.getState().setData(x);
-			return x;
+		res.json().then((resJson) => {
+			useChatsStore.getState().setData(resJson);
+			return resJson;
 		})
 	);
 
@@ -16,5 +16,5 @@ export const editChatByInboxId = (inboxId: string, body: any) =>
 	fetchApi({
 		path: `/chats/${inboxId}`,
 		method: 'PUT',
-		body: JSON.stringify(body),
+		body,
 	}).then((res) => res.json());

@@ -2,18 +2,18 @@ import React from 'react';
 import { useInboxesStore } from '../../store';
 import { useQuery } from '@tanstack/react-query';
 import { getChatByInboxId } from '../../api/chats';
-import Loading from '../../components/loading';
 import ChatHeader from './components/header';
 import { TChats } from '../../api/types';
 import ChatBody from './components/body';
 import { useChatsStore } from '../../store/chats';
 import ChatInput from './components/input';
 import ConnectInfo from './components/connect-info';
+import Loading from '../../components/loading';
 
 const Chats: React.FC = () => {
 	const { selectedInboxesId } = useInboxesStore();
 
-	const { isFetching } = useQuery<TChats>({
+	const { refetch, isFetching } = useQuery<TChats>({
 		queryKey: ['getChatByInboxesId'],
 		queryFn: () => getChatByInboxId(selectedInboxesId),
 	});
@@ -31,10 +31,13 @@ const Chats: React.FC = () => {
 						totalParticipants={data?.totalParticipants}
 					/>
 
-					<ChatBody data={data?.chats} />
+					<ChatBody
+						data={data?.chats}
+						refetch={refetch}
+					/>
 
 					{data?.id === '4' && <ConnectInfo />}
-					<ChatInput />
+					<ChatInput refetch={refetch} />
 				</div>
 			)}
 		</div>

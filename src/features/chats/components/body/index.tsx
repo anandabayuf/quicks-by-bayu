@@ -1,13 +1,17 @@
 import React from 'react';
-import { TChat } from '../../../../api/types';
+import { TChat, TChats } from '../../../../api/types';
 import ChatBubble from '../bubble';
 import ChatDateSeparator from '../date-separator';
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 
 type ChatBodyProps = {
 	data?: TChat;
+	refetch: (
+		options?: RefetchOptions | undefined
+	) => Promise<QueryObserverResult<TChats, Error>>;
 };
 
-const ChatBody: React.FC<ChatBodyProps> = ({ data }) => {
+const ChatBody: React.FC<ChatBodyProps> = ({ data, refetch }) => {
 	const keys = Object.keys(data || {});
 
 	React.useEffect(() => {
@@ -24,12 +28,15 @@ const ChatBody: React.FC<ChatBodyProps> = ({ data }) => {
 			>
 				{keys.map((item, index) => (
 					<React.Fragment key={index}>
-						<ChatDateSeparator date={item} />
+						{(data || {})[item]?.length > 0 && (
+							<ChatDateSeparator date={item} />
+						)}
 
 						{(data || {})[item].map((chat, chatIndex) => (
 							<ChatBubble
 								key={`${index}-${chatIndex}`}
 								data={chat}
+								refetch={refetch}
 							/>
 						))}
 					</React.Fragment>

@@ -1,22 +1,62 @@
 import React from 'react';
-import { TChatItem } from '../../../../api/types';
+import { TChatItem, TChats } from '../../../../api/types';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import NewMessageSeparator from '../new-message-separator';
 import { MoreIcon } from '../../../../icons';
 import { Dropdown, MenuProps } from 'antd';
+import { useChatsStore } from '../../../../store';
+import {
+	QueryObserverResult,
+	RefetchOptions,
+	useMutation,
+} from '@tanstack/react-query';
+import { editChatByInboxId } from '../../../../api/chats';
 
 type ChatBubbleProps = {
 	data: TChatItem;
+	refetch: (
+		options?: RefetchOptions | undefined
+	) => Promise<QueryObserverResult<TChats, Error>>;
 };
 
-const ChatBubble: React.FC<ChatBubbleProps> = ({ data }) => {
+const ChatBubble: React.FC<ChatBubbleProps> = ({ data, refetch }) => {
+	const { setSelectedId, data: datas } = useChatsStore();
+
+	const handleReply = () => setSelectedId(data.id);
+	const { mutateAsync: deleteChat } = useMutation({
+		mutationFn: (payload: any) =>
+			editChatByInboxId(payload.id, payload.body),
+	});
+
+	const handleDeleteChat = async () => {
+		if (!datas) return;
+		let newDatas = { ...datas };
+		const chatKey = data.id.split('-')[0];
+		const findIndex = newDatas.chats[chatKey].findIndex(
+			(item) => item.id === data.id
+		);
+
+		if (findIndex !== -1) newDatas.chats[chatKey].splice(findIndex, 1);
+
+		await deleteChat({
+			id: datas?.id,
+			body: newDatas,
+		});
+		await refetch();
+	};
+
 	const DROPDOWN_ITEMS = (): MenuProps['items'] => {
 		if (data.sender !== 'You')
 			return [
 				{
-					key: 'delete',
-					label: <div className="text-[#EB5757]">Delete</div>,
+					key: 'share',
+					label: <div className="text-[#2F80ED]">Share</div>,
+				},
+				{
+					key: 'reply',
+					label: <div className="text-[#2F80ED]">Reply</div>,
+					onClick: handleReply,
 				},
 			];
 
@@ -28,6 +68,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ data }) => {
 			{
 				key: 'delete',
 				label: <div className="text-[#EB5757]">Delete</div>,
+				onClick: handleDeleteChat,
 			},
 		];
 	};
@@ -51,6 +92,23 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ data }) => {
 				>
 					{data.sender}
 				</div>
+
+				{data.replyId && datas && (
+					<div
+						className={clsx(
+							data.sender === 'You'
+								? 'justify-end'
+								: 'justify-start',
+							'flex mb-2'
+						)}
+					>
+						<div className="max-w-[515px] bg-[#F2F2F2] border-solid border-[1px] border-[#E0E0E0] rounded-[5px] text-[#4F4F4F] p-[10px]">
+							{datas?.chats[data.replyId.split('-')[0]]?.find(
+								(item) => item.id === data.replyId
+							)?.chat || <i>No Message Available</i>}
+						</div>
+					</div>
+				)}
 
 				<div
 					className={clsx(

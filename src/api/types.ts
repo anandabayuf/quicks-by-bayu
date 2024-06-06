@@ -9,6 +9,8 @@ export type TInboxes = {
 };
 
 export type TChatItem = {
+	id: string;
+	replyId: string;
 	chat: string;
 	sender: string;
 	senderColor?: string;
@@ -28,4 +30,12 @@ export type TChats = {
 	inboxesId: string;
 	totalParticipants: number;
 	chats: TChat;
+};
+
+export type TTask = {
+	name: string;
+	isDone: boolean;
+	dueDate: number;
+	description: string;
+	id: string;
 };

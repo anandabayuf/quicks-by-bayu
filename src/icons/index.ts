@@ -8,3 +8,8 @@ export * from './person-icon';
 export * from './close-icon';
 export * from './arrow-downward-icon';
 export * from './more-icon';
+export * from './more-task-icon';
+export * from './arrow-down-icon';
+export * from './arrow-up-icon';
+export * from './clock-icon';
+export * from './pencil-icon';
