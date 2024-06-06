@@ -13,3 +13,4 @@ export * from './arrow-down-icon';
 export * from './arrow-up-icon';
 export * from './clock-icon';
 export * from './pencil-icon';
+export * from './bookmarks-icon';

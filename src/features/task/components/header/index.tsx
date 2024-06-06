@@ -1,10 +1,24 @@
 import { DownOutlined } from '@ant-design/icons';
 import { Button, Dropdown, MenuProps, Space } from 'antd';
 import React from 'react';
-import { useTaskStore } from '../../../../store';
+import {
+	QueryObserverResult,
+	RefetchOptions,
+	useMutation,
+} from '@tanstack/react-query';
+import { addTask } from '../../../../api/tasks';
+import { TTask } from '../../../../api/types';
 
-const TaskHeader: React.FC = () => {
-	const { data, setData } = useTaskStore();
+type TaskHeaderProps = {
+	refetch: (
+		options?: RefetchOptions | undefined
+	) => Promise<QueryObserverResult<TTask[], Error>>;
+};
+
+const TaskHeader: React.FC<TaskHeaderProps> = ({ refetch }) => {
+	const { mutateAsync, isPending } = useMutation({
+		mutationFn: (payload: any) => addTask(payload.body),
+	});
 
 	const MY_TASK_DROPDOWN_ITEMS: MenuProps['items'] = [
 		{
@@ -17,18 +31,19 @@ const TaskHeader: React.FC = () => {
 		},
 	];
 
-	const handleAdd = () => {
-		const newData = [...(data || [])];
-
-		newData.push({
-			description: '',
+	const handleAdd = async () => {
+		const newData: TTask = {
 			isDone: false,
 			name: '',
-			dueDate: Date.now() / 1000,
-			id: data?.length.toString() || '1',
-		});
+			description: '',
+			dueDate: null,
+			tag: [],
+		};
 
-		setData(newData);
+		await mutateAsync({
+			body: newData,
+		});
+		await refetch();
 	};
 
 	return (
@@ -48,6 +63,7 @@ const TaskHeader: React.FC = () => {
 			<Button
 				className="bg-[#2F80ED] text-white w-[98.8px] h-[40px]"
 				onClick={handleAdd}
+				loading={isPending}
 			>
 				New Task
 			</Button>

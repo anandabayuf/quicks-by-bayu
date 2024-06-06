@@ -33,7 +33,7 @@ const Task: React.FC = () => {
 
 	return (
 		<div className="absolute right-[34px] bottom-[110px] h-[737px] w-[734px] bg-white py-[24px] px-[32px] rounded-md">
-			<TaskHeader />
+			<TaskHeader refetch={refetch} />
 
 			{isFetching ? (
 				<Loading loadingText="Loading Task List ..." />
@@ -56,8 +56,8 @@ const Task: React.FC = () => {
 							),
 							children: (
 								<TaskItemBody
-									description={item.description}
-									dueDate={item.dueDate}
+									data={item}
+									refetch={refetch}
 								/>
 							),
 						}))}

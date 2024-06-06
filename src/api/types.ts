@@ -35,7 +35,8 @@ export type TChats = {
 export type TTask = {
 	name: string;
 	isDone: boolean;
-	dueDate: number;
-	description: string;
-	id: string;
+	dueDate?: number | null;
+	description?: string;
+	tag?: string[];
+	id?: string;
 };

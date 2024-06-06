@@ -12,6 +12,8 @@ import { deleteTask, editTask } from '../../../../api/tasks';
 import { TTask } from '../../../../api/types';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useDebouncedCallback } from 'use-debounce';
+import './index.scss';
 
 type TaskItemHeaderProps = {
 	isActive: boolean;
@@ -36,6 +38,7 @@ const TaskItemHeader: React.FC<TaskItemHeaderProps> = ({
 	});
 
 	const handleDelete = async () => {
+		if (!data.id) return;
 		await deleteTaskAsync(data.id);
 		await refetch();
 	};
@@ -66,6 +69,18 @@ const TaskItemHeader: React.FC<TaskItemHeaderProps> = ({
 		await refetch();
 	};
 
+	const handleChangeTitle = useDebouncedCallback(async (values: string) => {
+		const newData: TTask = {
+			...data,
+			name: values,
+		};
+		await editTaskAsync({
+			id: data.id,
+			body: newData,
+		});
+		await refetch();
+	}, 1000);
+
 	return (
 		<div className="flex items-baseline justify-between cursor-auto">
 			<div className="flex items-start">
@@ -73,6 +88,7 @@ const TaskItemHeader: React.FC<TaskItemHeaderProps> = ({
 					<LoadingOutlined />
 				) : (
 					<Checkbox
+						className="custom-checkbox"
 						checked={data.isDone}
 						onChange={handleCheck}
 					/>
@@ -80,7 +96,11 @@ const TaskItemHeader: React.FC<TaskItemHeaderProps> = ({
 
 				<div className="cursor-pointer ml-[22.5px] max-w-[335px]">
 					{!data.name ? (
-						<Input placeholder="Type Task Title" />
+						<Input
+							placeholder="Type Task Title"
+							onChange={(e) => handleChangeTitle(e.target.value)}
+							className="border-[#828282] placeholder:text-[#4F4F4F]"
+						/>
 					) : (
 						<div
 							onClick={onCollapse}
@@ -97,14 +117,18 @@ const TaskItemHeader: React.FC<TaskItemHeaderProps> = ({
 				</div>
 			</div>
 			<div className="flex items-start">
-				{!data.isDone && (
+				{!data.isDone && data.dueDate && (
 					<div className="text-[#EB5757]">
-						{formatDistance(data.dueDate * 1000, Date.now(), {})}
+						{formatDistance(data.dueDate * 1000, Date.now(), {
+							addSuffix: true,
+						})}
 					</div>
 				)}
-				<div className="ml-[19.75px] text-[#4F4F4F]">
-					{format(data.dueDate * 1000, 'dd/MM/yyyy')}
-				</div>
+				{data.dueDate && (
+					<div className="ml-[19.75px] text-[#4F4F4F]">
+						{format(data.dueDate * 1000, 'd/MM/yyyy')}
+					</div>
+				)}
 				<div
 					className="cursor-pointer ml-[15.32px]"
 					onClick={onCollapse}
