@@ -16,14 +16,19 @@ Quicks By Bayu is a skill challenge project that showcases my skills in React de
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/anandabayuf/quicks-by-bayu.git
    ```
+
 2. Navigate to the project directory:
+
    ```bash
    cd quicks-by-bayu
    ```
+
 3. Install the dependencies:
+
    ```bash
    npm install
    ```
@@ -31,6 +36,7 @@ Quicks By Bayu is a skill challenge project that showcases my skills in React de
 ## Usage
 
 To start the development server, run:
+
 ```bash
 npm run dev
 ```
@@ -40,21 +46,22 @@ This will start the app on `http://localhost:3000`.
 ## Features
 
 - Foundation and Bonus Round implementations
-   - Foundation:
-     - Inbox/Chats:
-       - Search Chat by Chat Name
-       - List Chats View
-       - Send Message
-       - Delete Message
-     - Task:
-       - Add New Task
-       - Edit Task
-       - Delete Task
-   - Bonus Round:
-     - Inbox:
-       - Reply to selected message
-     - Task:
-       - Tag/Sticker Task
+  - Foundation:
+    - Inbox/Chats:
+      - Search Chat by Chat Name
+      - List Chats View
+      - Send Message
+      - Delete Message
+    - Task:
+      - Add New Task
+      - List Tasks View
+      - Edit Task
+      - Delete Task
+  - Bonus Round:
+    - Inbox/Chats:
+      - Reply to selected message
+    - Task:
+      - Tag/Sticker Task
 - Design based on Figma prototype
 - Connected to Mockapi for live dummy backend (database)
 - Deployed on Netlify
