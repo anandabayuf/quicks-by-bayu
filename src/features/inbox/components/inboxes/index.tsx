@@ -14,13 +14,17 @@ const Inboxes: React.FC = () => {
 		queryFn: getAllInboxes,
 	});
 	const { data } = useInboxesStore();
-	const [filteredData, setFilteredData] = React.useState([...(data || [])]);
+	const [query, setQuery] = React.useState('');
+
+	const filteredData = React.useMemo(() => {
+		const regex = new RegExp(`${query}`, 'gi');
+
+		return data?.filter((item) => item.name.match(regex));
+	}, [query, data]);
 
 	const handleSearch = useDebouncedCallback((value: string) => {
-		if (!data) return;
-		const regex = new RegExp(`${value}`, 'gi');
-		setFilteredData(data.filter((item) => item.name.match(regex)));
-	}, 250);
+		setQuery(value);
+	}, 300);
 
 	return (
 		<div className="absolute right-[34px] bottom-[110px] h-[737px] w-[734px] bg-white py-[24px] px-[32px] rounded-md">
