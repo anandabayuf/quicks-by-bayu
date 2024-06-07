@@ -76,7 +76,8 @@ This will start the app on `http://localhost:3000`.
 ## Links
 
 - **GitHub Repository:** [Quicks By Bayu](https://github.com/anandabayuf/quicks-by-bayu)
-- **Deployed App:** [Quicks By Bayu](https://quicks-by-bayu.netlify.app)
+- **Deployed App:** [Quicks By Bayu](https://quicks-by-bayu.netlify.app) (*It is better to open the application on a screen with **1920x1080 pixels**.*)
+
 
 ## Contact
 
