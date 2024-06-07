@@ -4,7 +4,7 @@ export type TInboxes = {
 	lastChatTime: number;
 	name: string;
 	lastChat: string;
-	sender: string;
+	lastSender: string;
 	id: string;
 };
 
@@ -14,7 +14,6 @@ export type TChatItem = {
 	chat: string;
 	sender: string;
 	senderColor?: string;
-	isNewMessage: boolean;
 	time: number;
 	bubbleColor?: string;
 };
@@ -29,6 +28,7 @@ export type TChats = {
 	isGroup: boolean;
 	inboxesId: string;
 	totalParticipants: number;
+	lastUnReadChatId: string;
 	chats: TChat;
 };
 

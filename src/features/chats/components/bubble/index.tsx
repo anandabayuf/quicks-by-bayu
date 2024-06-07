@@ -1,17 +1,18 @@
 import React from 'react';
-import { TChatItem, TChats } from '../../../../api/types';
+import { TChatItem, TChats, TInboxes } from '../../../../api/types';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import NewMessageSeparator from '../new-message-separator';
 import { MoreIcon } from '../../../../icons';
 import { Dropdown, MenuProps } from 'antd';
-import { useChatsStore } from '../../../../store';
+import { useChatsStore, useInboxesStore } from '../../../../store';
 import {
 	QueryObserverResult,
 	RefetchOptions,
 	useMutation,
 } from '@tanstack/react-query';
 import { editChatByInboxId } from '../../../../api/chats';
+import { updateInboxes } from '../../../../api/inboxes';
 
 type ChatBubbleProps = {
 	data: TChatItem;
@@ -22,11 +23,14 @@ type ChatBubbleProps = {
 
 const ChatBubble: React.FC<ChatBubbleProps> = ({ data, refetch }) => {
 	const { setSelectedId, data: datas } = useChatsStore();
-
+	const { data: inboxes, selectedInboxesId } = useInboxesStore();
 	const handleReply = () => setSelectedId(data.id);
 	const { mutateAsync: deleteChat } = useMutation({
 		mutationFn: (payload: any) =>
 			editChatByInboxId(payload.id, payload.body),
+	});
+	const { mutateAsync: updateInbox } = useMutation({
+		mutationFn: (payload: any) => updateInboxes(payload.id, payload.body),
 	});
 
 	const handleDeleteChat = async () => {
@@ -44,6 +48,40 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ data, refetch }) => {
 			body: newDatas,
 		});
 		await refetch();
+
+		if (!inboxes) return;
+
+		const findInbox = inboxes.find((i) => i.id === selectedInboxesId);
+
+		if (!findInbox) return;
+
+		const keys = Object.keys(newDatas.chats);
+		let lastKeyIndex = keys.length - 1;
+		let lastChat: TChatItem | undefined = undefined;
+
+		while (lastKeyIndex >= 0) {
+			if (newDatas.chats[keys[lastKeyIndex]].length > 0) {
+				const lastIndex = newDatas.chats[keys[lastKeyIndex]].length - 1;
+				lastChat = newDatas.chats[keys[lastKeyIndex]][lastIndex];
+				break;
+			}
+			lastKeyIndex--;
+		}
+
+		if (!lastChat) return;
+
+		const newInbox: TInboxes = {
+			...findInbox,
+			isRead: true,
+			lastChat: lastChat.chat,
+			lastChatTime: lastChat.time,
+			lastSender: lastChat.sender,
+		};
+
+		await updateInbox({
+			id: selectedInboxesId,
+			body: newInbox,
+		});
 	};
 
 	const DROPDOWN_ITEMS = (): MenuProps['items'] => {
@@ -75,7 +113,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ data, refetch }) => {
 
 	return (
 		<>
-			{data.isNewMessage && <NewMessageSeparator />}
+			{datas?.lastUnReadChatId === data.id && <NewMessageSeparator />}
 			<div className="m-[10px]">
 				<div
 					style={{

@@ -11,3 +11,10 @@ export const getAllInboxes = () =>
 			return resJson;
 		})
 	);
+
+export const updateInboxes = (inboxesId: string, body: any) =>
+	fetchApi({
+		path: `/inboxes/${inboxesId}`,
+		method: 'PUT',
+		body,
+	}).then((res) => res.json());

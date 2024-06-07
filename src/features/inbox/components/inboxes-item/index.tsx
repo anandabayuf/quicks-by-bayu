@@ -20,7 +20,7 @@ const InboxesItem: React.FC<InboxesItemProps> = ({ data, isLastItem }) => {
 			<div className="py-[22px] flex items-start">
 				<InboxesAvatar
 					isGroup={data.isGroup}
-					initial={data.sender.charAt(0)}
+					initial={data.name.charAt(0)}
 				/>
 
 				<div className="flex-col w-full">
@@ -41,7 +41,7 @@ const InboxesItem: React.FC<InboxesItemProps> = ({ data, isLastItem }) => {
 
 					{data.isGroup && (
 						<div className="text-[#4F4F4F] lato-bold font-[14px] mb-1">
-							{data.sender} :
+							{data.lastSender} :
 						</div>
 					)}
 
