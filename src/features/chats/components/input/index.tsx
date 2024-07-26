@@ -12,6 +12,7 @@ import ChatReply from '../reply';
 import clsx from 'clsx';
 import { useInboxesStore } from '../../../../store';
 import { updateInboxes } from '../../../../api/inboxes';
+import { format, getUnixTime } from 'date-fns';
 
 type ChatInputProps = {
 	refetch: (
@@ -36,14 +37,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ refetch }) => {
 		if (!data) return;
 		const message = values.message.trim();
 		if (!message) return;
-		const date =
-			Math.floor(
-				new Date(
-					`${new Date(Date.now()).getFullYear()}-${
-						new Date(Date.now()).getMonth() + 1
-					}-${new Date(Date.now()).getDate()}`
-				).getTime()
-			) / 1000;
+		const date = getUnixTime(format(new Date(), 'yyyy-MM-dd'));
 		const keys = Object.keys(data?.chats || {});
 
 		if (keys.some((item) => item === date.toString())) {
